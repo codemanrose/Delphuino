@@ -103,22 +103,24 @@ else if(buttonState == LOW) {
 // Setting up button count to duty cycle for MAC Valve
 // MAC valve will not start until there is 2 psi positive pressure to MAP sensor. It will function at the set stage over 2 psi and be off at 1 psi or less.
 // Doing this will make it so that you do not get a vacuum leak at idle from the valve running. Under pressure is not an issue.
+
+// Stage 0
 if (count == 0){
   analogWrite (solenoidPin, DutyCycle0);
 }
- 
+// Stage 1 
 if (count == 1 && MAPOutput > 2){
   analogWrite (solenoidPin, DutyCycle1);
 }
-
+// Stage 2
 if (count == 2 && MAPOutput > 2){
   analogWrite (solenoidPin, DutyCycle2);
 }
-
+// Stage 3
 if (count == 3 && MAPOutput > 2){
   analogWrite (solenoidPin, DutyCycle3);
 }
-
+// Sets to Stage 0 if MAP sensor does not read 2 psi or more. Required to not create vacuum leak while not under boost (idle or normal driving)
 if (MAPOutput < 2){
   analogWrite (solenoidPin, DutyCycle0);
 }
