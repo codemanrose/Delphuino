@@ -9,7 +9,7 @@
 9 - SDA (A5)
 10 - Chassis Ground (secondary for prototype area)
 11 - ProtoArea2(pin 20)(terminal input/output)
-12 - Open (Jumper wire to 
+12 - Open (Jumper wire to arduino pins or ProtoArea1/2)
 13 - ProtoArea2 (Pin 10)(terminal input/output)
 14 - ProtoArea1 (pin 10)(terminal input/output)
 15 - 12+ MAC out
