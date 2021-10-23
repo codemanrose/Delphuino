@@ -71,6 +71,14 @@ void loop() {
 int MAPValue = analogRead(MAP);//Reads the MAP sensor voltage raw value on Analog port 2
   float MAPOutput = (((MAPValue/(float)1023-0.04)/.00369)*.145)-15.2; // MPX4250 = -16.3 min, 23.0 max, See comment below on setting up your locations elevation.
 
+  //For code directly above I would like to eventually make it calibrate absolute atmospheric pressure before doing math.
+//For example: My location is 1000ft above sea level. This is about 14.2 absolute atmospheric pressure
+//So to get 0psi at rest I need to take 14.7 - 14.2 = 0.5 psi difference. If I add 0.5 + 14.7 at the end of the MAPOutput math it will set base pressure to 0 for my location.
+//Idea is to run a calibration check based on location and then do the math using set calibration. I assume this would be done in Setup before Loop.
+//For now make your change based on your location or maybe try a calibration check code you can build and see if it works. 
+
+
+
   
   if (buttonState == HIGH ) {
     digitalWrite(ledPin, HIGH);
@@ -108,7 +116,7 @@ else if(buttonState == LOW) {
 if (count == 0){
   analogWrite (solenoidPin, DutyCycle0);
 }
-// Stage 1 
+// Stage 1
 if (count == 1 && MAPOutput > 2){
   analogWrite (solenoidPin, DutyCycle1);
 }
@@ -120,7 +128,7 @@ if (count == 2 && MAPOutput > 2){
 if (count == 3 && MAPOutput > 2){
   analogWrite (solenoidPin, DutyCycle3);
 }
-// Sets to Stage 0 if MAP sensor does not read 2 psi or more. Required to not create vacuum leak while not under boost (idle or normal driving)
+// Stage 0 code if MAP sensor does not see at least 2 psi charge pressure. 
 if (MAPOutput < 2){
   analogWrite (solenoidPin, DutyCycle0);
 }
@@ -131,12 +139,6 @@ if (MAPOutput < 2){
 lcd.setCursor(0,0);
 lcd.print("Boost PSI");
 
-
-//For code directly above I would like to eventually make it calibrate absolute atmospheric pressure before doing math.
-//For example: My location is 1000ft above sea level. This is about 14.2 absolute atmospheric pressure
-//So to get 0psi at rest I need to take 14.7 - 14.2 = 0.5 psi difference. If I add 0.5 + 14.7 at the end of the MAPOutput math it will set base pressure to 0 for my location.
-//Idea is to run a calibration check based on location and then do the math using set calibration. I assume this would be done in Setup before Loop.
-//For now make your change based on your location or maybe try a calibration check code you can build and see if it works. 
 
 
 //output raw data for MAP sensor to serial monitor
