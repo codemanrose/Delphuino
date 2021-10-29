@@ -1,0 +1,18 @@
+P59 test board pins. These are blue connector pins
+
+
+9 - MAC Valve Button
+10 - SDA
+22 - Heater control
+31 - Heater control
+38 - Heater control
+41 - Case Ground (ground entire Delphuino)
+49 - MAC Valve Button
+50 - SCL
+52 - 5V to LCD
+55 - 12+ to Delphuino
+62 - Heater control
+65 - MAC Valve PWM
+68 - MAC Valve PWM
+71 - Heater control
+78 - Heater control
