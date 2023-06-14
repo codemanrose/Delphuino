@@ -5,6 +5,6 @@ Visit the link below on details to the open source controller info. Under Open S
 https://www.14point7.com/pages/software-and-documentation
 
 You will need a MiniProg 3 programmer from Cypress to flash the hex files to the CY8 chip for wideband support.
-I plan to make the board availble pre programmed with the CY8 chip installed for self assembly. 
+I plan to make the board available pre programmed with the CY8 chip installed for self assembly. 
 
 3 port MAC valves as boost control solenoids
