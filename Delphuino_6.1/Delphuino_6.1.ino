@@ -1,7 +1,7 @@
 
-#include <LiquidCrystal_I2C.h>
-#include <PID_v1.h> // PID library
-#include "j1850vpw.h" // This calls the locally tab attached J1850 library. This was the only code I changed in this whole file - Dale Follett 7-15-23
+#include "LiquidCrystal_I2C.h" // Updated by Dale Follett 7-20-23 to look at locally attached library
+#include "PID_v2.h" // PID library - updated by Dale Follett 7-20-23 to look at locally attached library
+#include "j1850vpw.h" // This calls the locally tab attached J1850 library. Dale Follett 7-15-23
 
 #define MAP A0 // Pin for MAP sensor (boost sensor)
 #define solenoidPin1 9 // MAC Valve 1 to PWM pin 9
@@ -74,13 +74,15 @@ void setup()
   pinMode(buttonPin, INPUT); // initialize button pin as an input
   pinMode(ledPin, OUTPUT); //initialize the LED as and output
   pinMode(MAP, INPUT); // initialize the MAP sensor as an input
-  pinMode (wideband, INPUT); // initialize the wideband controller as an input
-  pinMode (coolant, INPUT); // initialize coolant pressure sensor as an input
-  pinMode (fuel, INPUT); // initialize fuel pressure sensor as an input
+  pinMode(wideband, INPUT); // initialize the wideband controller as an input
+  pinMode(coolant, INPUT); // initialize coolant pressure sensor as an input
+  pinMode(fuel, INPUT); // initialize fuel pressure sensor as an input
 
 // set PWM frequency for pins D9 and D10 ONLY to 15 hz 10 bit. 
+noInterrupts(); // Turn off all interrupts before setting up timer - Dale Follett 7-20-23
 TCCR1A = 0b00000011; // 10bit
 TCCR1B = 0b00001101; // x1024 fast pwm
+interrupts(); // Turn the interrupts back on - Dale Follett 7-20-23
 
 pinMode(solenoidPin1, OUTPUT);
 pinMode(solenoidPin2, OUTPUT);
@@ -128,6 +130,12 @@ void loop()
 //in this example it would be -14.7 + 1.30 = -13.32. So you take the mapRange variable/math above for boostPressure and -13.32 which will output the correct gauge pressure.
 //With this said if you are higher elevation you will need to roughly findr you atmosperic pressure. I'm just under 1000 ft so with that math its comes out to -13 with the offset. This gets me to 0 psi at key on, engine off. 
 
+/*
+Dale adding thoughts. We should be able to do this map sensor calibration once we get the J1850 library going. Set it up to call a function on power on, if the engine is off (no RPM input),
+then perform calibration, and if different than what is saved in EEPROM, update the EEPROM. If not different than eeprom, make no change. If powered on during engine
+running, read eeprom value and use it.
+*/
+
 
 //Setup Math for wideband sensor (SLC Free 2)
   // Read the analog input from the wideband controller
@@ -154,27 +162,30 @@ void loop()
   
   
   //Print Wideband voltage and AFR
-  Serial.print("Wideband Voltage: ");
+
+  //Dales notes - added (F) bracket to serial message that do not change. This is to program these to the main program storage space compared to dynamic memory.
+  //This free's up some dynamic memory being we have so little to work with on a nano.
+  Serial.print(F("Wideband Voltage: "));
   Serial.print(widebandVoltage, 2);  // Print with 2 decimal places
-  Serial.print(" V, Wideband AFR: ");
+  Serial.print(F(" V, Wideband AFR: "));
   Serial.println(widebandAfr, 2);    // Print with 2 decimal places
 
   //Print MAP voltage and and boost pressure
-  Serial.print("MAP Voltage: ");
+  Serial.print(F("MAP Voltage: "));
   Serial.print(mapVoltage, 2);  // Print with 2 decimal places
-  Serial.print(" V, Boost Pressure: ");
+  Serial.print(F(" V, Boost Pressure: "));
   Serial.println(boostPressure, 2);    // Print with 2 decimal places  
 
   // Print the coolant voltage and pressure values
-  Serial.print("Coolant Voltage: ");
+  Serial.print(F("Coolant Voltage: "));
   Serial.print(coolantVoltage, 2);  // Print with 2 decimal places
-  Serial.print(" V, Coolant Pressure: ");
+  Serial.print(F(" V, Coolant Pressure: "));
   Serial.println(coolantPressure, 2);    // Print with 2 decimal places
 
   //print the fuel voltage and pressure values
-  Serial.print("Fuel Voltage: ");
+  Serial.print(F("Fuel Voltage: "));
   Serial.print(fuelVoltage, 2); // Print with 2 decimal places
-  Serial.print(" V, Fuel Pressure: ");
+  Serial.print(F(" V, Fuel Pressure: "));
   Serial.print(fuelPressure, 2);  // Print with 2 decimal places
 
   
@@ -270,24 +281,24 @@ if (boostPressure < 2){
 
 //setup LCD display
 lcd.setCursor(0,0);
-lcd.print("Boost PSI");
+lcd.print(F("Boost PSI"));
 
 
 //output raw data for MAP sensor to serial monitor
 Serial.println(boostPressure);
 
 lcd.setCursor(11, 0);
-lcd.print("               "); //sets number back to zero if addtional number gets set on screen
+lcd.print(F("               ")); //sets number back to zero if addtional number gets set on screen
 lcd.setCursor(11, 0);
 lcd.print(boostPressure,0);
 lcd.setCursor(11,1);
 lcd.print(widebandAfr, 1);
 lcd.setCursor(0,3);
-lcd.print("Cool Psi:");
+lcd.print(F("Cool Psi:"));
 lcd.setCursor(9,3);
 lcd.print(coolantPressure, 1);
 lcd.setCursor(0, 2);
-lcd.print("Fuel Pressure:");
+lcd.print(F("Fuel Pressure:"));
 lcd.setCursor(14, 2);
 lcd.print(fuelPressure, 1);
 }
