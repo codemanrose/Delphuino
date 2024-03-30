@@ -1,7 +1,6 @@
 
 #include "LiquidCrystal_I2C.h" // Updated by Dale Follett 7-20-23 to look at locally attached library
 #include "PID_v2.h" // PID library - updated by Dale Follett 7-20-23 to look at locally attached library
-#include "j1850vpw.h" // This calls the locally tab attached J1850 library. Dale Follett 7-15-23
 
 #define MAP A0 // Pin for MAP sensor (boost sensor)
 #define solenoidPin1 9 // MAC Valve 1 to PWM pin 9
